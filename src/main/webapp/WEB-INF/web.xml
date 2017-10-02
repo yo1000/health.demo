@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+    version="3.0">
+  <display-name>Archetype Created Web Application</display-name>
+  <display-name>spring-todo</display-name>
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>/META-INF/applicationContext.xml</param-value>
+  </context-param>
+  <servlet>
+    <servlet-name>healthServlet</servlet-name>
+    <servlet-class>com.yo1000.health.HealthServlet</servlet-class>
+    <!--<init-param>-->
+      <!--<param-name>com.yo1000.health.requestTimeoutInMillis</param-name>-->
+      <!--<param-value>1</param-value>-->
+    <!--</init-param>-->
+    <!--<init-param>-->
+      <!--<param-name>com.yo1000.health.requestTimeoutConditionallyTermInMillis</param-name>-->
+      <!--<param-value>1</param-value>-->
+    <!--</init-param>-->
+    <!--<init-param>-->
+      <!--<param-name>com.yo1000.health.requestTimeoutCriticallyInMillis</param-name>-->
+      <!--<param-value>1</param-value>-->
+    <!--</init-param>-->
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>healthServlet</servlet-name>
+    <url-pattern>/health</url-pattern>
+  </servlet-mapping>
+</web-app>
