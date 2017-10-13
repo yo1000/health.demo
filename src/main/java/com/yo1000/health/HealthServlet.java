@@ -141,7 +141,8 @@ public class HealthServlet extends HttpServlet {
             statusCode = resolveStatusCode(statusCode, 500);
         }
 
-        long elapsed = System.currentTimeMillis() - start;
+        long afterChecked = System.currentTimeMillis();
+        long elapsed = afterChecked - start;
 
         if (timeoutCritically(elapsed)) {
             LOGGER.error("Application is dead. I'll die. `exit 9000`");
@@ -150,9 +151,16 @@ public class HealthServlet extends HttpServlet {
 
         if (timeout(elapsed)) {
             statusCode = resolveStatusCode(statusCode, 503);
+        } else if (statusCode == 200) {
+            clearCount++;
+
+            if (clearCount >= requestTimeoutClearThreshold) {
+                clearCount = 0L;
+                timeoutStart = 0L;
+            }
         }
 
-        if (timeoutConditionally(elapsed)) {
+        if (timeoutConditionally(afterChecked)) {
             LOGGER.error("Application is dead. I'll die. `exit 8000`");
             System.exit(8000);
         }
@@ -174,13 +182,6 @@ public class HealthServlet extends HttpServlet {
 
     private boolean timeout(long elapsed) {
         if (elapsed < requestTimeoutInMillis) {
-            clearCount++;
-
-            if (clearCount >= requestTimeoutClearThreshold) {
-                clearCount = 0L;
-                timeoutStart = 0L;
-            }
-
             return false;
         }
 
@@ -188,8 +189,7 @@ public class HealthServlet extends HttpServlet {
         return true;
     }
 
-    private boolean timeoutConditionally(long elapsed) {
-        long now = System.currentTimeMillis();
+    private boolean timeoutConditionally(long now) {
         if (timeoutStart <= 0L) {
             timeoutStart = now;
         }
@@ -199,7 +199,7 @@ public class HealthServlet extends HttpServlet {
             return false;
         }
 
-        LOGGER.warn("Status: conditional timeout. elapsed: {}ms, term: {}ms", elapsed, term);
+        LOGGER.warn("Status: conditional timeout. term: {}ms", term);
         return true;
     }
 
